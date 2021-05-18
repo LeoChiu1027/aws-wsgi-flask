@@ -1,7 +1,10 @@
 from marshmallow import validate, Schema, fields
+from common.ma import ma
+from models.user import UserModel
 
-
-class UserSchema(Schema):
+class UserSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = UserModel
     name = fields.String(required=False)
     email = fields.Email(required=True)
     password = fields.String(required=True, validate=[
