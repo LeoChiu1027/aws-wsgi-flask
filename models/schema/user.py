@@ -1,8 +1,8 @@
-from common.ma import ma
-from marshmallow import validate
+from marshmallow import validate, Schema, fields
 
 
-class UserSchema(ma.Schema):
-    email = ma.Email(required=True)
-    password = ma.Str(required=True, validate=[
+class UserSchema(Schema):
+    name = fields.String(required=False)
+    email = fields.Email(required=True)
+    password = fields.String(required=True, validate=[
                       validate.Length(min=6, max=36)],)

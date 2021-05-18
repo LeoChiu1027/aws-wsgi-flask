@@ -2,6 +2,7 @@ from flask_restful import Resource
 from flask import request
 from models.schema.user import UserSchema
 from models.user import UserModel
+from marshmallow import ValidationError
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
@@ -19,10 +20,13 @@ class User (Resource):
             'user': user_schema.dump(user)
         }
 
-    def post(self, name):
-        result = user_schema.load(request.json)
-
-        user = UserModel(name, result['email'], result['password'])
+    def post(self):
+        try:
+            result = user_schema.load(request.json)
+        except ValidationError as err:
+            return err.messages, 422
+            
+        user = UserModel(result['name'], result['email'], result['password'])
         user.add_user()
         return {
             'message': 'Insert user success',
@@ -30,9 +34,10 @@ class User (Resource):
         }
 
     def put(self, name):
-        result = user_schema.load(request.json)
-        if len(result.errors) > 0:
-            return result.errors, 433
+        try:
+            result = user_schema.load(request.json)
+        except ValidationError as err:
+            return err.messages, 422
 
         user = UserModel.get_user(name)
         if not user:
@@ -55,10 +60,7 @@ class User (Resource):
 
 class Users(Resource):
     def get(self):
-
-        users = UserModel.get_all_user()
-        print(users)
         return {
             'message': '',
-            'users': users_schema.dump(users)
+            'users': users_schema.dump(UserModel.get_all_user())
         }
