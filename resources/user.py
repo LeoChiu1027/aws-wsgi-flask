@@ -16,11 +16,11 @@ class User (Resource):
             return {
                 'message': 'username not exist!'
             }, 403
-        # return {
-        #     'message': '',
-        #     'user': user_schema.dump(user)
-        # }
-        return Response(user_schema.dump(user), mimetype="application/json", status=200)
+        return {
+            'message': '',
+            'user': user_schema.dump(user)
+        }
+        # return Response(user_schema.dump(user), mimetype="application/json", status=200)
 
     def put(self, name):
         try:
