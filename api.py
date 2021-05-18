@@ -13,7 +13,7 @@ class PrintHelloWorld(Resource):
 
 app = Flask(__name__)
 api = Api(app)
-app.wsgi_app = LoggerMiddleware(app.wsgi_app)
+# app.wsgi_app = LoggerMiddleware(app.wsgi_app)
 
 api.add_resource(PrintHelloWorld, "/print_hello_world/")
 api.add_resource(User, "/user/<string:name>")

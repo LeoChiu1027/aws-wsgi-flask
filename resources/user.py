@@ -1,72 +1,53 @@
-from flask_restful import Resource, reqparse 
-from models.schema.user_schema import UserSchema
+from flask_restful import Resource
 from flask import request
-
-users = [{
-    'name': 'kirai',
-}]
+from models.schema.user import UserSchema
+from models.user import UserModel
 
 user_schema = UserSchema()
+users_schema = UserSchema(many=True)
 
 class User (Resource):
 
-    parser = reqparse.RequestParser()
-    parser.add_argument('email', required=True, help='Email is required')
-    parser.add_argument('password', required=True, help='Password is required')
-
     def get(self, name):
-        find = [item for item in users if item['name'] == name]
-        if len(find) == 0:
-            return {
-                'message': 'username not exist!'
-            }, 403
-        user = find[0]
+        user = UserModel.get_user(name)
         if not user:
             return {
                 'message': 'username not exist!'
             }, 403
         return {
             'message': '',
-            'user': user
+            'user': user_schema.dump(user)
         }
 
     def post(self, name):
-        json_data = request.json
-        result = user_schema.load(json_data)
+        result = user_schema.load(request.json)
 
-        if len(result.errors) > 0:
-            return result.errors, 433
-
-        user = {
-            'name': name,
-            'email': result.data['email'],
-            'password': result.data['password']
-        }
-        global users
-        users.append(user)
+        user = UserModel(name, result['email'], result['password'])
+        user.add_user()
         return {
             'message': 'Insert user success',
-            'user': user
+            'user': user_schema.dump(user)
         }
 
     def put(self, name):
-        arg = self.parser.parse_args()
-        find = [item for item in users if item['name'] == name]
-        if len(find) == 0:
+        result = user_schema.load(request.json)
+        if len(result.errors) > 0:
+            return result.errors, 433
+
+        user = UserModel.get_user(name)
+        if not user:
             return {
                 'message': 'username not exist!'
             }, 403
-        user = find[0]
-        user['email'] = arg['email']
-        user['password'] = arg['password']
+        user.email = result.data['email']
+        user.password = result.data['password']
         return {
             'message': 'Update user success',
-            'user': user
+            'user': user_schema.dump(user).data
         }
 
     def delete(self, name):
-        global users
-        users = [item for item in users if item['name'] != name]
+        UserModel.delete_user(name)
         return {
             'message': 'Delete done!'
         }
@@ -74,7 +55,10 @@ class User (Resource):
 
 class Users(Resource):
     def get(self):
+
+        users = UserModel.get_all_user()
+        print(users)
         return {
             'message': '',
-            'users': users
+            'users': users_schema.dump(users)
         }
