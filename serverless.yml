@@ -20,6 +20,8 @@ service: aws-wsgi-flask
 # Check out our docs for more details
 frameworkVersion: '2'
 
+configValidationMode: warn
+
 provider:
   name: aws
   runtime: python3.8
@@ -62,7 +64,7 @@ functions:
     handler: wsgi_handler.handler
     events:
       - http: ANY /
-      - http: ANY {proxy+}
+      - http: ANY /{proxy+}
 custom:
   wsgi:
     app: app.app

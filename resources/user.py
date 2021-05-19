@@ -33,8 +33,8 @@ class User (Resource):
             return {
                 'message': 'username not exist!'
             }, 403
-        user.email = result.data['email']
-        user.password = result.data['password']
+        user.email = result['email']
+        user.password = result['password']
         return {
             'message': 'Update user success',
             'user': user_schema.dump(user)
