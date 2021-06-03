@@ -13,6 +13,17 @@ class UserModel(db.Model):
         self.email = email
         self.password = password
 
+    def match_password(self, password):
+        if password != self.password:
+            raise UserModel.PasswordDoesNotMatch
+
+    class PasswordDoesNotMatch(BaseException):
+        pass
+
+    class DoesNotExist(BaseException):
+        pass
+   
+
     def add_user(self):
         db.session.add(self)
         db.session.commit()
@@ -23,6 +34,13 @@ class UserModel(db.Model):
     @classmethod
     def get_user(cls, name):
         return cls.query.filter_by(name=name).first()
+
+    @classmethod
+    def get_user_by_email(cls, email):
+        user =  cls.query.filter_by(email=email).first()
+        if not user:
+            raise UserModel.DoesNotExist
+        return user
 
     def delete_user(self):
         db.session.delete(self)

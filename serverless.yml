@@ -60,11 +60,22 @@ provider:
 #    - include-me-dir/**
 
 functions:
+  jwtAuthorizer:
+    handler: handler/authorizer.handler
   api:
     handler: wsgi_handler.handler
     events:
-      - http: ANY /
-      - http: ANY /{proxy+}
+      - http:
+          path: /
+          method: ANY         
+          authorizer: jwtAuthorizer
+      - http:
+          path: /{proxy+}
+          method: ANY
+          authorizer: jwtAuthorizer
+
+
+
 custom:
   wsgi:
     app: app.app
@@ -123,3 +134,5 @@ custom:
 plugins:
   - serverless-python-requirements
   - serverless-wsgi
+  - serverless-offline-local-authorizers-plugin
+  - serverless-offline

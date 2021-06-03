@@ -3,6 +3,8 @@
   "description": "",
   "version": "0.1.0",
   "devDependencies": {
+    "serverless-offline": "^7.0.0",
+    "serverless-offline-local-authorizers-plugin": "^1.0.3",
     "serverless-python-requirements": "^5.1.1",
     "serverless-wsgi": "^1.7.7"
   }
