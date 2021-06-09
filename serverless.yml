@@ -65,6 +65,9 @@ functions:
   api:
     handler: wsgi_handler.handler
     events:
+      - http: 
+          path: /userToken
+          method: POST
       - http:
           path: /
           method: ANY         
