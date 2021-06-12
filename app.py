@@ -11,10 +11,11 @@ import os
 app = Flask(__name__)
 api = Api(app)
 
-print('environment:%s', os.environ.get('FLASK_ENV'))
+print('environment:', os.environ.get('FLASK_ENV'))
 app.logger.info('environment:%s', os.environ.get('FLASK_ENV'))
 # app.wsgi_app = LoggerMiddleware(app.wsgi_app)
 app.config.from_object('config.'+os.environ.get('FLASK_ENV').capitalize())
+
 db.init_app(app)
 ma.init_app(app)
 initialize_routes(api)

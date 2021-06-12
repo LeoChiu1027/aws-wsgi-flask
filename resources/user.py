@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, current_app
 from flask_restful import Resource
 from models.schema.user import UserSchema, UserTokenSchema
 from models.user import UserModel
@@ -55,9 +55,10 @@ class User (Resource):
 
 class Users(Resource):
     def get(self):
+        users = UserModel.get_all_user()
         return {
             'message': '',
-            'users': users_schema.dump(UserModel.get_all_user())
+            'users': users_schema.dump(users)
         }
 
     def post(self):
@@ -77,6 +78,7 @@ class Users(Resource):
 class UserToken(Resource):
     def post(self):
         try:
+            print('DEBUG:',current_app.config['DEBUG'])
             result = userToken_schmea.load(request.json)
         except ValidationError as err:
             return err.messages, 422

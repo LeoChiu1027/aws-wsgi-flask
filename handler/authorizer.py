@@ -6,13 +6,10 @@ JWT_EXP_DELTA_SECONDS = 20
 
 def handler(event, context):
     jwt_token = event.get('authorizationToken')
-    print('event-----------')
-    print(event)
-    print('jwt_token-----------')
-    print(jwt_token.split(' ')[1])
+    print('event:', event)
+    print('jwt_token:', jwt_token)
 
     if not jwt_token:
-        print('no token------------')
         return {
             'message': 'token not found!'
         }, 401   
